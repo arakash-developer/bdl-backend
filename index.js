@@ -23,6 +23,7 @@ const greetingRoute = require("./routes/greetingRoute");
 const homeRoute = require("./routes/homeRoute");
 const serviceRoute = require("./routes/serviceRoute");
 const customerRoute = require("./routes/customerRoute");
+const recentWorkBannerRoute = require("./routes/recentWorkBannerRoute");
 
 // Serve static files from the 'uploads/images' and 'uploads/videos' directories
 app.use(
@@ -46,6 +47,7 @@ app.use("/api/v1/series", seriesRoute);
 app.use("/api/v1/sub-series", subSeriesRoute);
 app.use("/api/v1/products", productRoute);
 app.use("/api/v1/specifications", specificationRoute);
+app.use("/api/v1/recentWorkBanner", recentWorkBannerRoute);
 app.use("/api/v1/recent-works", recentWorkRoute);
 app.use("/api/v1/mockup-zones", mockupZoneRoute);
 app.use("/api/v1/profiles", profileRoute);
