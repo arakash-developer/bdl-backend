@@ -19,7 +19,8 @@ exports.createRecentWorkBanner = async (req, res) => {
       return res.status(400).json({ message: "File upload error" });
     }
     try {
-      const { title, status, priority, recentWork,recentProjectName } = req.body;
+      const { title, status, priority, recentWork, recentProjectName } =
+        req.body;
       const image = req.files["image"] ? req.files["image"][0].path : null;
       if (!image) {
         return res.status(400).json({ message: "Image is required" });
@@ -54,6 +55,7 @@ exports.updateRecentWorkBanner = async (req, res) => {
     const { priority } = req.body;
     const { recentWork } = req.body;
     const { status } = req.body;
+    const { recentProjectName } = req.body;
 
     if (!id) {
       return res.status(400).json({ message: "ID is required" });
@@ -83,6 +85,7 @@ exports.updateRecentWorkBanner = async (req, res) => {
       banner.title = title;
       banner.priority = priority;
       banner.recentWork = recentWork;
+      banner.recentProjectName = recentProjectName;
       await banner.save();
 
       res.status(200).json(banner);
