@@ -1,6 +1,5 @@
 const fs = require("fs");
 
-
 const RecentWorkBanner = require("../models/recentWorkBanner");
 const upload = require("../config/fileconfig");
 exports.getRecentWorkBanners = async (req, res) => {
@@ -50,8 +49,9 @@ exports.updateRecentWorkBanner = async (req, res) => {
 
     const { id } = req.params;
     const { title } = req.body;
-    const {priority} = req.body
-    const {recentWork} = req.body
+    const { priority } = req.body;
+    const { recentWork } = req.body;
+    const { status } = req.body;
 
     if (!id) {
       return res.status(400).json({ message: "ID is required" });
@@ -59,7 +59,7 @@ exports.updateRecentWorkBanner = async (req, res) => {
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
     }
-    if(!priority){
+    if (!priority) {
       return res.status(400).json({ message: "Priority is required" });
     }
     try {
@@ -77,6 +77,7 @@ exports.updateRecentWorkBanner = async (req, res) => {
         banner.image = image;
       }
 
+      banner.status = status;
       banner.title = title;
       banner.priority = priority;
       banner.recentWork = recentWork;
@@ -88,7 +89,6 @@ exports.updateRecentWorkBanner = async (req, res) => {
     }
   });
 };
-
 
 exports.deleteRecentWorkBanner = async (req, res) => {
   const { id } = req.params;
