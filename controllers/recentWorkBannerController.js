@@ -50,12 +50,16 @@ exports.updateRecentWorkBanner = async (req, res) => {
 
     const { id } = req.params;
     const { title } = req.body;
+    const {priority} = req.body
 
     if (!id) {
       return res.status(400).json({ message: "ID is required" });
     }
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
+    }
+    if(!priority){
+      return res.status(400).json({ message: "Priority is required" });
     }
     try {
       const banner = await RecentWorkBanner.findById(id);
@@ -73,6 +77,7 @@ exports.updateRecentWorkBanner = async (req, res) => {
       }
 
       banner.title = title;
+      banner.priority = priority;
       await banner.save();
 
       res.status(200).json(banner);
