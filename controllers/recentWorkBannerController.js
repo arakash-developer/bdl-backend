@@ -51,6 +51,7 @@ exports.updateRecentWorkBanner = async (req, res) => {
     const { id } = req.params;
     const { title } = req.body;
     const {priority} = req.body
+    const {recentWork} = req.body
 
     if (!id) {
       return res.status(400).json({ message: "ID is required" });
@@ -78,6 +79,7 @@ exports.updateRecentWorkBanner = async (req, res) => {
 
       banner.title = title;
       banner.priority = priority;
+      banner.recentWork = recentWork;
       await banner.save();
 
       res.status(200).json(banner);
