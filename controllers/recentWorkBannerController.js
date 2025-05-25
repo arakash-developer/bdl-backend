@@ -4,7 +4,8 @@ const RecentWorkBanner = require("../models/recentWorkBanner");
 const upload = require("../config/fileconfig");
 exports.getRecentWorkBanners = async (req, res) => {
   try {
-    const banners = await RecentWorkBanner.find({ status: "active" });
+    // const banners = await RecentWorkBanner.find({ status: "active" });
+    const banners = await RecentWorkBanner.find();
     res.status(200).json(banners);
   } catch (error) {
     console.error("Error fetching recent work banners:", error);
@@ -18,7 +19,7 @@ exports.createRecentWorkBanner = async (req, res) => {
       return res.status(400).json({ message: "File upload error" });
     }
     try {
-      const { title, status, priority, recentWork } = req.body;
+      const { title, status, priority, recentWork,recentProjectName } = req.body;
       const image = req.files["image"] ? req.files["image"][0].path : null;
       if (!image) {
         return res.status(400).json({ message: "Image is required" });
@@ -30,6 +31,7 @@ exports.createRecentWorkBanner = async (req, res) => {
         status,
         priority,
         recentWork,
+        recentProjectName,
       });
 
       await newBanner.save();

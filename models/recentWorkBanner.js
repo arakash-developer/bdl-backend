@@ -12,6 +12,7 @@ const recentWorkBanner = new Schema(
       ref: "RecentWork",
       default: null,
     },
+    recentProjectName: { type: String, default: null}, 
   },
   {
     timestamps: true,
