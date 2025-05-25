@@ -1,19 +1,15 @@
 const express = require("express");
+const {
+  createRecentWorkBanner,
+  updateRecentWorkBanner,
+  getRecentWorkBanners,
+  deleteRecentWorkBanner,
+} = require("../controllers/recentWorkBannerController");
 const router = express.Router();
 
-const {
-  getAllRecentWork,
-  createRecentWork,
-  updateRecentWork,
-  deleteRecentWork,
-  getRecentWorkById,
-} = require("../controllers/recentWorkBannerController");
-
-router
-  .get("/", getAllRecentWork)
-  .post("/", createRecentWork)
-  .patch("/:id", updateRecentWork)
-  .delete("/:id", deleteRecentWork)
-  .get("/:id", getRecentWorkById);
+router.get("/", getRecentWorkBanners);
+router.post("/", createRecentWorkBanner);
+router.patch("/:id", updateRecentWorkBanner);
+router.delete("/:id", deleteRecentWorkBanner);
 
 module.exports = router;
