@@ -1,5 +1,5 @@
 const MockupZone = require("../models/mockupZone");
-const upload = require("../config/fileconfig");
+const upload = require("../config/fileconfig2");
 const fs = require("fs");
 const path = require("path");
 
@@ -55,17 +55,30 @@ exports.createMockupZone = async (req, res) => {
         .json({ message: "At least one image is required" });
     }
 
-    const mockupZone = new MockupZone({
-      name,
-      images: images,
-      videos: [{ video: video, thumbnail: thumbnail }],
-    });
-
     try {
-      const createdMockupZone = await mockupZone.save();
-      res.status(201).json(createdMockupZone);
+      // Check if mockup zone with the same name exists
+      let mockupZone = await MockupZone.findOne({ name });
+
+      if (mockupZone) {
+        // Update existing record
+        mockupZone.images = images;
+        mockupZone.videos = [{ video, thumbnail }];
+
+        const updatedZone = await mockupZone.save();
+        return res.status(200).json(updatedZone);
+      } else {
+        // Create new record
+        mockupZone = new MockupZone({
+          name,
+          images,
+          videos: [{ video, thumbnail }],
+        });
+
+        const createdMockupZone = await mockupZone.save();
+        return res.status(201).json(createdMockupZone);
+      }
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     }
   });
 };
