@@ -4,7 +4,6 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 
-// Custom storage engine
 class SharpDiskStorage {
   constructor(opts) {
     this.imageFolder = opts.imageFolder || "./uploads/images";
@@ -18,37 +17,27 @@ class SharpDiskStorage {
       try {
         const buffer = Buffer.concat(chunks);
         const randomString = crypto.randomBytes(6).toString("hex");
-        const ext = path.extname(file.originalname);
-        const filename = `${
-          file.fieldname
-        }-${Date.now()}-${randomString}${ext}`;
-        let destFolder;
+        
+        // For images, always save as .webp
+        const ext = file.mimetype.startsWith("image") ? ".webp" : path.extname(file.originalname);
+        const filename = `${file.fieldname}-${Date.now()}-${randomString}${ext}`;
+        const destFolder = file.mimetype.startsWith("image") ? this.imageFolder : this.videoFolder;
+        fs.mkdirSync(destFolder, { recursive: true });
+        const filepath = path.join(destFolder, filename);
 
-        // Determine folder based on mimetype
         if (file.mimetype.startsWith("image")) {
-          destFolder = this.imageFolder;
-          fs.mkdirSync(destFolder, { recursive: true });
-
-          const filepath = path.join(destFolder, filename);
-          // Process with sharp
           await sharp(buffer)
-            .resize(1024, 1024, { fit: "inside" })
-            .webp({ quality: 70 })
+            .resize(1920, 1080, { fit: "inside" })
+            .webp({ quality: 100 })
             .toFile(filepath);
-
-          cb(null, { path: filepath, size: buffer.length, filename });
         } else if (file.mimetype.startsWith("video")) {
-          destFolder = this.videoFolder;
-          fs.mkdirSync(destFolder, { recursive: true });
-
-          const filepath = path.join(destFolder, filename);
-          // Save video buffer directly to disk
           fs.writeFileSync(filepath, buffer);
-
-          cb(null, { path: filepath, size: buffer.length, filename });
         } else {
-          cb(new Error("Unsupported file type"));
+          return cb(new Error("Unsupported file type"));
         }
+
+        const stats = fs.statSync(filepath);
+        cb(null, { path: filepath, size: stats.size, filename });
       } catch (err) {
         cb(err);
       }
@@ -83,7 +72,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage,
-  limits: { fileSize: 2000000000 }, // 2 GB
+  limits: { fileSize: 2 * 1024 * 1024 * 1024 }, // 2 GB
   fileFilter,
 }).fields([
   { name: "image", maxCount: 250 },
