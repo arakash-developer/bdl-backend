@@ -46,7 +46,7 @@ class SharpDiskStorage {
             .outputOptions([
               "-vf scale=-1:720", // 720p height, keep aspect ratio
               "-preset fast",
-              "-crf 28", // Quality setting (lower is better quality)
+              "-crf 26", // Quality setting (lower is better quality)
             ])
             .on("end", () => {
               fs.unlinkSync(tempInput);
