@@ -12,6 +12,36 @@ exports.getAllRecentWork = async (req, res) => {
   }
 };
 
+exports.getLimitRecentWork = async (req, res) => {
+  try {
+    // Parse limit and page from query params, set default values
+    const limit = parseInt(req.query.limit) || 16; // default limit = 10
+    const page = parseInt(req.query.page) || 1; // default page = 1
+
+    // Calculate how many documents to skip
+    const skip = (page - 1) * limit;
+
+    // Fetch recent work with sorting, pagination
+    const recentWork = await RecentWork.find()
+      .sort({ _id: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Optionally, get total count for frontend pagination info
+    const totalCount = await RecentWork.countDocuments();
+
+    res.status(200).json({
+      data: recentWork,
+      page,
+      limit,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 /**
  * The function retrieves a recentWork from the database and sends it as a response.
  */

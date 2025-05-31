@@ -7,10 +7,12 @@ const {
   updateRecentWork,
   deleteRecentWork,
   getRecentWorkById,
+  getLimitRecentWork,
 } = require("../controllers/recentWorkController");
 
 router
   .get("/", getAllRecentWork)
+  .get("/recentlimitwork", getLimitRecentWork)
   .post("/", createRecentWork)
   .patch("/:id", updateRecentWork)
   .delete("/:id", deleteRecentWork)
