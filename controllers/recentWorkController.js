@@ -12,6 +12,18 @@ exports.getAllRecentWork = async (req, res) => {
   }
 };
 
+exports.getPrioritizedRecentWork = async (req, res) => {
+  try {
+    const recentWork = await RecentWork.find()
+      .sort({ priority: -1, _id: -1 }) // sort by priority DESC, then newest DESC
+      .limit(15);
+
+    res.status(200).json(recentWork);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 exports.getLimitRecentWork = async (req, res) => {
   try {
     // Parse limit and page from query params, set default values

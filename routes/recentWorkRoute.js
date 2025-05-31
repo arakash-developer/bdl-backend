@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   getAllRecentWork,
+  getPrioritizedRecentWork,
   createRecentWork,
   updateRecentWork,
   deleteRecentWork,
@@ -13,6 +14,7 @@ const {
 router
   .get("/", getAllRecentWork)
   .get("/recentlimitwork", getLimitRecentWork)
+  .get("/prioritized", getPrioritizedRecentWork)
   .post("/", createRecentWork)
   .patch("/:id", updateRecentWork)
   .delete("/:id", deleteRecentWork)
