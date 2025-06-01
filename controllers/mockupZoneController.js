@@ -12,6 +12,59 @@ exports.getAllMockupZones = async (req, res) => {
   }
 };
 
+exports.getMockupZonePaginated = async (req, res) => {
+  try {
+    const { name } = req.params; // get name from URL param instead of id
+
+    if (!name) {
+      return res.status(400).json({ message: "Name parameter is required" });
+    }
+
+    // Parse pagination query params with defaults
+    const imagePage = Math.max(parseInt(req.query.imagePage) || 1, 1);
+    const imageLimit = Math.max(parseInt(req.query.imageLimit) || 5, 1);
+    const videoPage = Math.max(parseInt(req.query.videoPage) || 1, 1);
+    const videoLimit = Math.max(parseInt(req.query.videoLimit) || 5, 1);
+
+    // Find the MockupZone document by name
+    const mockupZone = await MockupZone.findOne({ name }).lean();
+
+    if (!mockupZone) {
+      return res.status(404).json({ message: "MockupZone not found" });
+    }
+
+    // Safe fallback if arrays don't exist
+    const images = Array.isArray(mockupZone.images) ? mockupZone.images : [];
+    const videos = Array.isArray(mockupZone.videos) ? mockupZone.videos : [];
+
+    // Calculate slice indices
+    const imageStartIndex = (imagePage - 1) * imageLimit;
+    const videoStartIndex = (videoPage - 1) * videoLimit;
+
+    // Paginate arrays
+    const paginatedImages = images.slice(
+      imageStartIndex,
+      imageStartIndex + imageLimit
+    );
+    const paginatedVideos = videos.slice(
+      videoStartIndex,
+      videoStartIndex + videoLimit
+    );
+
+    // Build the response object with pagination applied
+    const response = {
+      ...mockupZone, // spread all existing fields
+      images: paginatedImages,
+      videos: paginatedVideos,
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.getMockupZoneByZoneName = async (req, res) => {
   const { name } = req.params;
   try {
