@@ -83,10 +83,13 @@ exports.createRecentWork = async (req, res) => {
       return res.status(400).json({ message: "No data provided" });
     }
 
-    const { title, description, client, location, series } = req.body;
+    const { title, description, client, location, series,projectId } = req.body;
 
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
+    }
+    if (!projectId) {
+      return res.status(400).json({ message: "ProjectId is required" });
     }
 
     // Validate video and thumbnail files
@@ -111,6 +114,7 @@ exports.createRecentWork = async (req, res) => {
     }
 
     const recentWork = new RecentWork({
+      projectId: projectId,
       images: imagePaths,
       title: title ? title : null,
       videos: [{ video: videoFile, thumbnail: thumbnailFile }], // Single video with thumbnail
@@ -151,6 +155,7 @@ exports.updateRecentWork = async (req, res) => {
       client,
       location,
       series,
+      projectId,
     } = req.body;
 
     // Find the recent work entry
@@ -234,6 +239,7 @@ exports.updateRecentWork = async (req, res) => {
     recentWork.client = client || recentWork.client;
     recentWork.location = location || recentWork.location;
     recentWork.series = series || recentWork.series;
+    recentWork.projectId = projectId || recentWork.projectId;
     recentWork.updatedAt = Date.now();
 
     try {

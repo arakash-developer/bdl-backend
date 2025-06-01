@@ -7,6 +7,7 @@ const recrnyWorkVideos = new Schema({
 });
 const recentWorkSchema = new Schema(
   {
+    projectId: { type: String, required: true },
     images: { type: Array, required: true },
     videos: [recrnyWorkVideos],
     client: { type: String, default: null },
