@@ -25,6 +25,7 @@ const serviceRoute = require("./routes/serviceRoute");
 const customerRoute = require("./routes/customerRoute");
 const recentWorkBannerRoute = require("./routes/recentWorkBannerRoute");
 const mokupBannerRoute = require("./routes/mokupBannerRoute");
+const mockupSeriesRoute = require("./routes/mokupseriesRoute");
 
 // Serve static files from the 'uploads/images' and 'uploads/videos' directories
 app.use(
@@ -59,6 +60,7 @@ app.use("/api/v1/banners", bannerRoute);
 app.use("/api/v1/greeting", greetingRoute);
 app.use("/api/v1/services", serviceRoute);
 app.use("/api/v1/customers", customerRoute);
+app.use("/api/v1/mockup-series", mockupSeriesRoute);
 
 mongoose
   .connect(process.env.MONGO_URI)
