@@ -4,7 +4,15 @@ const upload = require("../config/fileconfig");
 
 exports.getMokupzoneBanners = async (req, res) => {
   try {
-    const banners = await MokupzoneBanner.find();
+    const { mokupzone, status = "active" } = req.query;
+    const query = { status: status }; // Default to active status
+
+    if (mokupzone) query.mokupzone = mokupzone;
+
+    const banners = await MokupzoneBanner.find(query)
+      .sort({ priority: 1 })
+      .exec();
+
     res.status(200).json(banners);
   } catch (error) {
     console.error("Error fetching mokupzone banners:", error);
