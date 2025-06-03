@@ -4,8 +4,9 @@ const RecentWorkBanner = require("../models/recentWorkBanner");
 const upload = require("../config/fileconfig");
 exports.getRecentWorkBanners = async (req, res) => {
   try {
-    // const banners = await RecentWorkBanner.find({ status: "active" });
-    const banners = await RecentWorkBanner.find();
+    const banners = await RecentWorkBanner.find({ status: "active" }).sort({
+      priority: 1,
+    });
     res.status(200).json(banners);
   } catch (error) {
     console.error("Error fetching recent work banners:", error);
