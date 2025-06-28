@@ -3,7 +3,11 @@ const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
+const ffmpeg = require("fluent-ffmpeg");
+const ffmpegInstaller = require("@ffmpeg-installer/ffmpeg");
 const os = require("os");
+
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 class SharpDiskStorage {
   constructor(opts) {
@@ -27,21 +31,30 @@ class SharpDiskStorage {
         const finalPath = path.join(destFolder, filename);
 
         if (file.mimetype.startsWith("image")) {
-          // Image processing with Sharp
           await sharp(buffer)
             .resize(1920, 1080, { fit: "inside" })
-            .webp({ quality: 100 })
+            .webp({ quality: 90 })
             .toFile(finalPath);
 
           const stats = fs.statSync(finalPath);
           cb(null, { path: finalPath, size: stats.size, filename });
         } else if (file.mimetype.startsWith("video")) {
-          // Video upload without FFmpeg (no processing)
-          const tempPath = path.join(destFolder, filename);
-          fs.writeFileSync(tempPath, buffer);
+          const tempInput = path.join(os.tmpdir(), `${randomString}-input.tmp`);
+          fs.writeFileSync(tempInput, buffer);
 
-          const stats = fs.statSync(tempPath);
-          cb(null, { path: tempPath, size: stats.size, filename });
+          ffmpeg(tempInput)
+            .outputOptions([
+              "-vf scale=-1:720", // 720p height, keep aspect ratio
+              "-preset fast",
+              "-crf 26", // Quality setting (lower is better quality)
+            ])
+            .on("end", () => {
+              fs.unlinkSync(tempInput);
+              const stats = fs.statSync(finalPath);
+              cb(null, { path: finalPath, size: stats.size, filename });
+            })
+            .on("error", (err) => cb(err))
+            .save(finalPath);
         } else {
           cb(new Error("Unsupported file type"));
         }

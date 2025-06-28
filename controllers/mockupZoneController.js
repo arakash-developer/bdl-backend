@@ -1,5 +1,5 @@
 const MockupZone = require("../models/mockupZone");
-const upload = require("../config/fileconfig3");
+const upload = require("../config/fileconfig");
 const fs = require("fs");
 const path = require("path");
 
